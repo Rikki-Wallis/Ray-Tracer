@@ -1,0 +1,8 @@
+{
+    "name": "ray-tracer",
+    "version": "1.0.0",
+    "dependencies": [
+        "sdl2"
+    ],
+    "builtin-baseline": "98ef4fc522b7f41fdc01dd05df1b25fb63cdae9d"
+}
