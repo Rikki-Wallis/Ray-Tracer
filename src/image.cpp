@@ -1,4 +1,4 @@
-#include "image.hpp"
+#include "headers/image.hpp"
 
 // Default constructor
 Image::Image() {
@@ -36,6 +36,15 @@ void Image::SetPixel(const int x, const int y, const double red, const double gr
 	m_rChannel.at(x).at(y) = red;
 	m_gChannel.at(x).at(y) = green;
 	m_bChannel.at(x).at(y) = blue;
+}
+
+// Return dimesions of image
+int Image::GetXSize() {
+	return m_xSize;
+}
+
+int Image::GetYSize() {
+	return m_ySize;
 }
 
 // Generate display

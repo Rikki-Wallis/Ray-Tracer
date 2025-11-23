@@ -22,6 +22,10 @@ public:
 	// Return the image for display
 	void Display();
 
+	// Return dimensions of the image
+	int GetXSize();
+	int GetYSize();
+
 private:
 	Uint32 ConvertColor(const double red, const double green, const double blue);
 	

@@ -3,6 +3,8 @@
 
 #include <SDL2/SDL.h>
 #include "image.hpp"
+#include "scene.hpp"
+#include "camera.hpp"
 
 class CApp {
 public:
@@ -16,8 +18,13 @@ public:
     void OnExit();
 
 private:
+    void PrintVector(const qbVector<double>& inputVector);
+
+private:
     // Image instance
     Image m_image;
+    // Scene Instance
+    Scene m_scene;
 
     // SDL2 stuff
     bool isRunning;
