@@ -1,11 +1,13 @@
 #ifndef SCENE_H
 #define SCENE_H
 
+#include <memory>
 #include <vector>
 #include <SDL2/SDL.h>
 #include "image.hpp"
 #include "camera.hpp"
 #include "objsphere.hpp"
+#include "pointlight.hpp"
 
 class Scene
 {
@@ -19,10 +21,9 @@ public:
 private:
 	// Attributes
 	Camera m_camera;
-	ObjSphere m_testSphere;
+	std::vector<std::shared_ptr<ObjectBase>> m_objectList;
+	std::vector<std::shared_ptr<LightBase>> m_lightList;
 
 };
-
-
 
 #endif 

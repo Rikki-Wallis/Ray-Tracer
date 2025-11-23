@@ -18,7 +18,8 @@ add_executable(CMakeTarget
     "src/camera.cpp"
     "src/objectbase.cpp"
     "src/objsphere.cpp"
-)
+    "src/lightbase.cpp" 
+    "src/pointlight.cpp")
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
   set_property(TARGET CMakeTarget PROPERTY CXX_STANDARD 20)

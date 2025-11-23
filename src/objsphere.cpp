@@ -50,6 +50,10 @@ bool ObjSphere::TestIntersections(const Ray& castRay, qbVector<double>& intPoint
 			intPoint = castRay.m_point1 + (vhat * t2);
 		}
 
+		// Compute the local normal
+		localNormal = intPoint;
+		localNormal.Normalize();
+
 		return true;
 	}
 

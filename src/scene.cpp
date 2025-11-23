@@ -9,6 +9,12 @@ Scene::Scene() {
 	m_camera.SetHorizontalSize(0.25);
 	m_camera.setAspect(16.0/9.0);
 	m_camera.UpdateCameraGeometry();
+
+	// Construct objects and lights
+	m_objectList.push_back(std::make_shared<ObjSphere>(ObjSphere()));
+	m_lightList.push_back(std::make_shared<PointLight>(PointLight()));
+	m_lightList.at(0) -> m_location = qbVector<double>{ std::vector<double> {5.0, -10.0, -5.0} };
+	m_lightList.at(0)-> m_colour = qbVector<double>{ std::vector<double> {255.0, 255.0, 255.0} };
 }
 
 // Perform Rendering
@@ -37,25 +43,32 @@ bool Scene::Render(Image& outputImage) {
 			// Generate ray for this pixel
 			m_camera.GenerateRay(normX, normY, cameraRay);
 
-			// Test if intersects
-			bool validInt = m_testSphere.TestIntersections(cameraRay, intPoint, localNormal, localColour);
+			// Test for intersections with all objects in the scene
+			for (auto currentObject : m_objectList) {
+				bool validInt = currentObject->TestIntersections(cameraRay, intPoint, localNormal, localColour);
+				
+				// If we have an intersection change pixel to red
+				if (validInt) {
 
-			// If we have an intersection change pixel to red
-			if (validInt) {
-				// Compute the distance between the camera and the point of intersection
-				double dist = (intPoint - cameraRay.m_point1).norm();
-				if (dist > maxDist) {
-					maxDist = dist;
+					// Compute intensity of light
+					double intensity;
+					qbVector<double> colour{ 3 };
+					bool validIllumination = false;
+					
+					for (auto currentLight : m_lightList) {
+						validIllumination = currentLight->ComputeIllumination(intPoint, localNormal, m_objectList, currentObject, colour, intensity);
+					}
+
+					if (validIllumination) {
+						outputImage.SetPixel(x, y, 255.0 * intensity, 0.0, 0.0);
+					}
+					else {
+						outputImage.SetPixel(x, y, 0.0, 0.0, 0.0);
+					}
 				}
-
-				if (dist < minDist) {
-					minDist = dist;
+				else {
+					outputImage.SetPixel(x, y, 0.0, 0.0, 0.0);
 				}
-
-				outputImage.SetPixel(x, y, 255.0 - ((dist - 9.0) / 0.94605) * 255.0, 0.0, 0.0);
-			}
-			else {
-				outputImage.SetPixel(x, y, 0.0, 0.0, 0.0);
 			}
 		}
 	}
