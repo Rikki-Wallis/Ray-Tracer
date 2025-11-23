@@ -18,7 +18,7 @@ bool CApp :: OnInit() {
     }
 
     // Create the window
-    pWindow = SDL_CreateWindow("Ray Tracer", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 640, 360, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
+    pWindow = SDL_CreateWindow("Ray Tracer", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1920, 1080, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI | SDL_WINDOW_FULLSCREEN_DESKTOP);
     SDL_SetWindowBordered(pWindow, SDL_TRUE);
 
 
@@ -30,26 +30,18 @@ bool CApp :: OnInit() {
         // Initialise the image instance
         m_image.Initialise(1280, 720, pRenderer);
 
-        // Test Camera
-        Camera testCamera;
-        testCamera.SetPosition(qbVector<double>(std::vector<double>({ 0.0, 0.0, 0.0 })));
-        testCamera.SetLookAt(qbVector<double>(std::vector<double>({ 0.0, 2.0, 0.0 })));
-        testCamera.SetUp(qbVector<double>(std::vector<double>({ 0.0, 0.0, 1.0 })));
-        testCamera.SetLength(1.0);
-        testCamera.SetHorizontalSize(1.0);
-        testCamera.setAspect(1.0);
-        testCamera.UpdateCameraGeometry();
+        // Set background to white
+        SDL_SetRenderDrawColor(pRenderer, 255, 255, 255, 255);
+        SDL_RenderClear(pRenderer);
 
-        auto screenCenter = testCamera.GetScreenCenter();
-        auto screenU = testCamera.GetU();
-        auto screenV = testCamera.GetV();
+        // Render the scene
+        m_scene.Render(m_image);
 
-        std::cout << "Camera Screen center: " << std::endl;
-        PrintVector(screenCenter);
-        std::cout << "Camera  U vector: " << std::endl;
-        PrintVector(screenU);
-        std::cout << "Camera V vector: " << std::endl;
-        PrintVector(screenV);
+        // Display the image
+        m_image.Display();
+
+        // Show the result
+        SDL_RenderPresent(pRenderer);
     }
     else {
         return false;
@@ -89,18 +81,18 @@ void CApp::OnLoop() {
 
 
 void CApp::OnRender() {
-    // Set background colour to white
-    SDL_SetRenderDrawColor(pRenderer, 255, 255, 255, 255);
-    SDL_RenderClear(pRenderer);
-       
-    // Render scene
-    m_scene.Render(m_image);
-    
-    // Display image
-    m_image.Display();
+    //// Set background colour to white
+    //SDL_SetRenderDrawColor(pRenderer, 255, 255, 255, 255);
+    //SDL_RenderClear(pRenderer);
+    //   
+    //// Render scene
+    //m_scene.Render(m_image);
+    //
+    //// Display image
+    //m_image.Display();
 
-    //Show result
-    SDL_RenderPresent(pRenderer);
+    ////Show result
+    //SDL_RenderPresent(pRenderer);
 }
 
 

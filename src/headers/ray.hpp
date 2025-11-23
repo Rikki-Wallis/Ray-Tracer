@@ -7,6 +7,7 @@ class Ray
 {
 public:
 	// Construcctor
+	Ray();
 	Ray(const qbVector<double>& point1, const qbVector<double>& point2);
 
 	// Return point of ray
