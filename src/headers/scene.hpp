@@ -8,6 +8,7 @@
 #include "camera.hpp"
 #include "objsphere.hpp"
 #include "pointlight.hpp"
+#include "objplane.hpp"
 
 class Scene
 {

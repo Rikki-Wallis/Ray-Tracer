@@ -11,25 +11,62 @@ PointLight::~PointLight() {
 
 }
 
-bool PointLight::ComputeIllumination(const qbVector<double>& intPoint, const qbVector<double>& localNormal, const std::vector<std::shared_ptr<ObjectBase>>& objectList, const std::shared_ptr<ObjectBase>& currentObject, qbVector<double>& colour, double& intensity) {
-	
-	// Construct a vector pointing for intPoint to the light
-	qbVector<double> lightDir = (m_location - intPoint).Normalized();
+bool PointLight::ComputeIllumination(const qbVector<double>& intPoint, const qbVector<double>& localNormal,
+    const std::vector<std::shared_ptr<ObjectBase>>& objectList,
+    const std::shared_ptr<ObjectBase>& currentObject,
+    qbVector<double>& colour, double& intensity)
+{
+    // Construct a vector pointing from intPoint to the light
+    qbVector<double> lightDir = (m_location - intPoint).Normalized();
 
-	// Compute a starting point
-	qbVector<double> startPoint = intPoint;
+    // Compute a starting point
+    qbVector<double> startPoint = intPoint;
 
-	// Compute the angle between the local normal and the light ray
-	double angle = acos(qbVector<double>::dot(localNormal, lightDir));
+    // Construct a ray from the poi to the light
+    Ray lightRay(startPoint, startPoint + lightDir);
 
-	// If normal is pointing away from light, then we have no illumination
-	if (angle > 1.5708) {
-		colour = m_colour;
-		intensity = 0.0;
-		return false;
-	}
+    // Check intersections with all objects in the scene except current one
+    qbVector<double> poi{ 3 };
+    qbVector<double> poiNormal{ 3 };
+    qbVector<double> poiColour{ 3 };
+    bool validInt = false;
 
-	colour = m_colour;
-	intensity = m_intensity * (1.0 - (angle / 1.5708));
-	return true;
+    for (auto sceneObject : objectList) {
+        if (sceneObject != currentObject) {
+            validInt = sceneObject->TestIntersections(lightRay, poi, poiNormal, poiColour);
+
+            // If we have an intersection, object is in shadow - break immediately
+            if (validInt) {
+                break;
+            }
+        }
+    }
+
+    /* Only continue to compute illumination if the light ray did not intersect
+       with any objects in the scene. I.e. no objects are casting a shadow
+       from this light source */
+    if (!validInt) {
+        // Compute the angle between the local normal and the light ray
+        double angle = acos(qbVector<double>::dot(localNormal, lightDir));
+
+        // If the normal is pointing away from the light, then no illumination
+        if (angle > 1.5708) {
+            // No illumination
+            colour = m_colour;
+            intensity = 0.0;
+            return false;
+        }
+        else {
+            // We do have illumination
+            colour = m_colour;
+            intensity = m_intensity * (1.0 - (angle / 1.5708));
+            return true;
+        }
+    }
+    else {
+        // Shadow
+        colour = m_colour;
+        intensity = 0.0;
+        return false;
+    }
 }
