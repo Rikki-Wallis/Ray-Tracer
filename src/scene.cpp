@@ -10,8 +10,26 @@ Scene::Scene() {
 	m_camera.setAspect(16.0/9.0);
 	m_camera.UpdateCameraGeometry();
 
-	// Construct objects and lights
+	// Construct objects
 	m_objectList.push_back(std::make_shared<ObjSphere>(ObjSphere()));
+	m_objectList.push_back(std::make_shared<ObjSphere>(ObjSphere()));
+	m_objectList.push_back(std::make_shared<ObjSphere>(ObjSphere()));
+
+	// Modify the spheres
+	GTform testMatrix1, testMatrix2, testMatrix3;
+	testMatrix1.SetTransform(qbVector<double>{std::vector<double>{-1.5, 0.0, 0.0}}, qbVector<double>{std::vector<double>{0.0, 0.0, 0.0}}, qbVector<double>{std::vector<double>{0.5, 0.5, 0.75}});
+	testMatrix2.SetTransform(qbVector<double>{std::vector<double>{0.0, 0.0, 0.0}}, qbVector<double>{std::vector<double>{0.0, 0.0, 0.0}}, qbVector<double>{std::vector<double>{0.75, 0.5, 0.5}});
+	testMatrix3.SetTransform(qbVector<double>{std::vector<double>{1.5, 0.0, 0.0}}, qbVector<double>{std::vector<double>{0.0, 0.0, 0.0}}, qbVector<double>{std::vector<double>{0.75, 0.75, 0.75}});
+	m_objectList.at(0)->SetTransformMatrix(testMatrix1);
+	m_objectList.at(1)->SetTransformMatrix(testMatrix2);
+	m_objectList.at(2)->SetTransformMatrix(testMatrix3);
+
+	m_objectList.at(0)->m_baseColour = qbVector<double>{ std::vector<double>{64.0, 128.0, 200.0} };
+	m_objectList.at(1)->m_baseColour = qbVector<double>{ std::vector<double>{255.0, 128.0, 0.0} };
+	m_objectList.at(2)->m_baseColour = qbVector<double>{ std::vector<double>{255.0, 200.0, 0.0} };
+
+
+	// Construct lights
 	m_lightList.push_back(std::make_shared<PointLight>(PointLight()));
 	m_lightList.at(0) -> m_location = qbVector<double>{ std::vector<double> {5.0, -10.0, -5.0} };
 	m_lightList.at(0)-> m_colour = qbVector<double>{ std::vector<double> {255.0, 255.0, 255.0} };
@@ -54,20 +72,15 @@ bool Scene::Render(Image& outputImage) {
 					double intensity;
 					qbVector<double> colour{ 3 };
 					bool validIllumination = false;
-					
+
 					for (auto currentLight : m_lightList) {
 						validIllumination = currentLight->ComputeIllumination(intPoint, localNormal, m_objectList, currentObject, colour, intensity);
 					}
 
 					if (validIllumination) {
-						outputImage.SetPixel(x, y, 255.0 * intensity, 0.0, 0.0);
+						//outputImage.SetPixel(x, y, 255.0 * intensity, 0.0, 0.0);
+						outputImage.SetPixel(x, y, localColour.GetElement(0) * intensity, localColour.GetElement(1) * intensity, localColour.GetElement(2) * intensity);
 					}
-					else {
-						outputImage.SetPixel(x, y, 0.0, 0.0, 0.0);
-					}
-				}
-				else {
-					outputImage.SetPixel(x, y, 0.0, 0.0, 0.0);
 				}
 			}
 		}

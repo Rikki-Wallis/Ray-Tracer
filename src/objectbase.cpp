@@ -17,6 +17,10 @@ bool ObjectBase::TestIntersections(const Ray& castRay, qbVector<double>& intPoin
 	return false;
 }
 
+void ObjectBase::SetTransformMatrix(const GTform& transformMatrix) {
+	m_transformMatrix = transformMatrix;
+}
+
 bool ObjectBase::CloseEnough(const double f1, const double f2) {
 	return fabs(f1 - f2) < EPSILON;
 }
